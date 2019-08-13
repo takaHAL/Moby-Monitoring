@@ -1,0 +1,25 @@
+.containerStatus{
+  width: 100%;
+  max-width: 1300px;
+  @include flexContainer;
+  justify-content: space-between;
+  
+  &-card{
+    width: calc(calc(100% - 40px) / 5);
+    max-width: 250px;
+    box-sizing: border-box;
+    padding: 10px;
+    background: $subColor;
+    margin-bottom: 10px;
+    @include boxShadow;
+  
+    & p{
+      text-align: center;
+      font-weight: 600;
+      letter-spacing: .4px;
+
+      &:nth-child(1){ font-size: 12.5px; }
+      &:nth-child(2){ font-size: 22px; }
+    }
+  }
+}

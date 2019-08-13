@@ -1,0 +1,51 @@
+.navigation{
+
+  &-link{
+    width: 100%;
+    display: flex;
+    text-decoration: none;
+    color: #FFF;
+    position: relative;
+  }
+
+  &-action{
+    width: 100%;
+    box-sizing: border-box;
+    border-bottom: $border;
+  }
+
+  &-item{
+
+    &:hover + &__tooltip{
+      opacity: 1;
+    }
+
+    &__tooltip{
+      width: 80px;
+      position: absolute;
+      bottom: -20px;
+      left: -16px;
+      text-align: center;
+      transition: .4s;
+      opacity: 0;
+
+      & span{
+        display: inline-block;
+        background: $mainColor;
+        font-size: 12px;
+        box-sizing: border-box;
+        border-radius: 2px;
+        padding: 1px 5px;
+        color: #FFF;
+      }
+    }
+  }
+}
+
+.nuxt-link-active{
+  color: $mainColor;
+
+  & i{
+    color: $mainColor !important;
+  }
+}

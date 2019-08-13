@@ -1,0 +1,27 @@
+.containerChart{
+  width: 100%;
+  max-width: 1300px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 15px;
+
+  &-card{
+    @include boxShadow;
+    width: calc(calc(100% - 20px) / 2);
+    margin-bottom: 20px;
+    background: $subColor;
+    padding: 0 15px 15px 15px;
+  }
+
+  &-header{
+    @include flexContainer;
+    margin-bottom: 20px;
+    align-items: center;
+  }
+
+  &-title{
+    font-size: 18px;
+    font-weight: 600;
+  }
+}

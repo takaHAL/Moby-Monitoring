@@ -1,0 +1,25 @@
+
+/*
+ * variable
+ */
+
+$mainColor: #8BC34A;
+$subColor: #424242;
+$border: 1px solid rgba(255,255,255,0.12);
+
+$nuxtColor: #64B587;
+
+/**
+ *  mixin
+ */
+
+@mixin flexContainer(){
+  display: flex;
+  flex-wrap: wrap;
+}
+
+@mixin boxShadow(){
+  border: $border;
+  border-radius: 3px;
+  box-sizing: border-box;
+}
