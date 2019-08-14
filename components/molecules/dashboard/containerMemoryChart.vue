@@ -18,7 +18,11 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
-
+declare global {
+    interface Window {
+        containerMemoryData: number,
+    }
+}
 @Component({
   components: {
     containerChartHeader : () => import('~/components/atoms/dashboard/containerChartHeader.vue'),
@@ -40,8 +44,8 @@ export default class ContainerMemoryChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-
       res.data.containerList.forEach((value,index) => {
+        window.containerMemoryData = res.data.containerData[index][2]
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -97,7 +101,7 @@ export default class ContainerMemoryChart extends Vue {
             chart.data.datasets.forEach(function(dataset) {
               dataset.data.push({
                 x: Date.now(),
-                y: Math.random()
+                y: window.containerMemoryData
               })
             })
           },
