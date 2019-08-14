@@ -20,7 +20,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
 declare global {
     interface Window {
-        containerCpuData: number,
+        containerCpuData: number[],
     }
 }
 @Component({
@@ -43,9 +43,10 @@ export default class ContainerMemoryChart extends Vue {
 
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
+      window.containerCpuData = []
       containerAry = res.data.containerList
       res.data.containerList.forEach((value,index) => {
-        window.containerCpuData = res.data.containerData[index][1]
+        window.containerCpuData.push(res.data.containerData[index][1])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -98,10 +99,10 @@ export default class ContainerMemoryChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
-            chart.data.datasets.forEach(function(dataset) {
+            chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
-                y: window.containerCpuData
+                y: window.containerCpuData[index]
               })
             })
           },
