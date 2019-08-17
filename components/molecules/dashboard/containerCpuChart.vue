@@ -83,6 +83,8 @@ export default class ContainerMemoryChart extends Vue {
           zeroLineColor: "#555"
         },
         ticks: {
+          suggestedMin: 0,
+          suggestedMax: 1,
           fontColor: "#FFF"
         }
       }],
@@ -99,6 +101,18 @@ export default class ContainerMemoryChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
+            var containerCpuData: number[] = []
+            axios.get("http://localhost:7000/containerStats")
+            .then(res => {
+              containerCpuData = []
+              res.data.containerList.forEach((value,index) => {
+                containerCpuData.push(res.data.containerData[index][1])
+              })
+            }).then(_ => {
+              console.log(window.containerCpuData[0])
+              window.containerCpuData = containerCpuData
+            })
+            //window.containerCpuData[0] = Math.random()
             chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
