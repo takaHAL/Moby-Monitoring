@@ -29,3 +29,19 @@ body{
 .white-text{
   color: #FFF;
 }
+
+th{
+  line-height: 56px;
+  color: #FFF !important;
+  font-weight: 600;
+  font-size: 14px !important;
+}
+td{
+  line-height: 48px;
+
+  & p{
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
