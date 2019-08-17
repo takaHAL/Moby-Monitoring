@@ -18,7 +18,11 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
-
+declare global {
+    interface Window {
+        containerCpuData: number[],
+    }
+}
 @Component({
   components: {
     containerChartHeader : () => import('~/components/atoms/dashboard/containerChartHeader.vue'),
@@ -40,8 +44,9 @@ export default class ContainerMemoryChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-
+      window.containerCpuData = []
       res.data.containerList.forEach((value,index) => {
+        window.containerCpuData.push(res.data.containerData[index][1])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -78,6 +83,8 @@ export default class ContainerMemoryChart extends Vue {
           zeroLineColor: "#555"
         },
         ticks: {
+          suggestedMin: 0,
+          suggestedMax: 1,
           fontColor: "#FFF"
         }
       }],
@@ -94,10 +101,20 @@ export default class ContainerMemoryChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
-            chart.data.datasets.forEach(function(dataset) {
+            var containerCpuData: number[] = []
+            axios.get("http://localhost:7000/containerStats")
+            .then(res => {
+              containerCpuData = []
+              res.data.containerList.forEach((value,index) => {
+                containerCpuData.push(res.data.containerData[index][1])
+              })
+            }).then(_ => {
+              window.containerCpuData = containerCpuData
+            })
+            chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
-                y: Math.random()
+                y: window.containerCpuData[index]
               })
             })
           },
