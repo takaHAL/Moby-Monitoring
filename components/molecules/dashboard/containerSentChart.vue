@@ -13,7 +13,11 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
-
+declare global {
+    interface Window {
+        containerNetworkSent: number[],
+    }
+}
 @Component({
   components: {
     containerChartHeader : () => import('~/components/atoms/dashboard/containerChartHeader.vue'),
@@ -35,8 +39,10 @@ export default class ContainerSentChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-
+      window.containerNetworkSent = []
       res.data.containerList.forEach((value,index) => {
+        var network = res.data.containerData[index][3]
+        window.containerNetworkSent.push(network.slice(0, network.indexOf('/')).replace(/[^0-9^\.]/g, ''))
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -73,6 +79,7 @@ export default class ContainerSentChart extends Vue {
           zeroLineColor: "#555"
         },
         ticks: {
+          suggestedMin: 0,
           fontColor: "#FFF"
         }
       }],
@@ -89,10 +96,20 @@ export default class ContainerSentChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
-            chart.data.datasets.forEach(function(dataset) {
+            var containerNetworkSent: number[] = []
+            axios.get("http://localhost:7000/containerStats")
+            .then(res => {
+              res.data.containerList.forEach((value,index) => {
+                var network = res.data.containerData[index][3]
+                containerNetworkSent.push(network.slice(0, network.indexOf('/')).replace(/[^0-9^\.]/g, ''))
+              })
+            }).then(_ => {
+              window.containerNetworkSent = containerNetworkSent
+            })
+            chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
-                y: Math.random()
+                y: window.containerNetworkSent[index]
               })
             })
           },

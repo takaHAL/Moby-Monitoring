@@ -44,7 +44,9 @@ export default class ContainerMemoryChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
+      window.containerCpuData = []
       res.data.containerList.forEach((value,index) => {
+        window.containerCpuData.push(res.data.containerData[index][1])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -107,10 +109,8 @@ export default class ContainerMemoryChart extends Vue {
                 containerCpuData.push(res.data.containerData[index][1])
               })
             }).then(_ => {
-              console.log(window.containerCpuData[0])
               window.containerCpuData = containerCpuData
             })
-            //window.containerCpuData[0] = Math.random()
             chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),

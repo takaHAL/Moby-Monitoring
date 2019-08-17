@@ -13,7 +13,11 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
-
+declare global {
+    interface Window {
+        containerNetworkRecived: number[],
+    }
+}
 @Component({
   components: {
     containerChartHeader : () => import('~/components/atoms/dashboard/containerChartHeader.vue'),
@@ -21,7 +25,7 @@ import Chart from 'chart.js'
   }
 })
 export default class ContainerRecivedChart extends Vue {
-  private title: string = "Container Sent Network Traffic"
+  private title: string = "Container Recived Network Traffic"
   private colorData: string[] = ['#D81B60','#039BE5','#43A047','#FDD835','#FB8C00','#8E24AA']
   private containerData: Chart.ChartData = {datasets: null}
   private loaded: boolean = false
@@ -35,8 +39,10 @@ export default class ContainerRecivedChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-
+      window.containerNetworkRecived = []
       res.data.containerList.forEach((value,index) => {
+        var network = res.data.containerData[index][3]
+        window.containerNetworkRecived.push(network.slice(network.indexOf('/'), network.length).replace(/[^0-9^\.]/g, ''))
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -73,6 +79,7 @@ export default class ContainerRecivedChart extends Vue {
           zeroLineColor: "#555"
         },
         ticks: {
+          suggestedMin: 0,
           fontColor: "#FFF"
         }
       }],
@@ -89,10 +96,20 @@ export default class ContainerRecivedChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
-            chart.data.datasets.forEach(function(dataset) {
+            var containerNetworkRecived: number[] = []
+            axios.get("http://localhost:7000/containerStats")
+            .then(res => {
+              res.data.containerList.forEach((value,index) => {
+                var network = res.data.containerData[index][3]
+                containerNetworkRecived.push(network.slice(network.indexOf('/'), network.length).replace(/[^0-9^\.]/g, ''))
+              })
+            }).then(_ => {
+              window.containerNetworkRecived = containerNetworkRecived
+            })
+            chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
-                y: Math.random()
+                y: window.containerNetworkRecived[index]
               })
             })
           },
