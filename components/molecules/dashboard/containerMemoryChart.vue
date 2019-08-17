@@ -43,10 +43,8 @@ export default class ContainerMemoryChart extends Vue {
 
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
-      window.containerMemoryData = []
       containerAry = res.data.containerList
       res.data.containerList.forEach((value,index) => {
-        window.containerMemoryData.push(res.data.containerData[index][2])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -83,6 +81,7 @@ export default class ContainerMemoryChart extends Vue {
           zeroLineColor: "#555"
         },
         ticks: {
+          suggestedMin: 0,
           fontColor: "#FFF"
         }
       }],
@@ -99,6 +98,17 @@ export default class ContainerMemoryChart extends Vue {
           duration: 6000,
           delay: 2000,
           onRefresh: function(chart) {
+            var containerMemoryData: number[] = []
+            axios.get("http://localhost:7000/containerStats")
+            .then(res => {
+              containerMemoryData = []
+              res.data.containerList.forEach((value,index) => {
+                containerMemoryData.push(res.data.containerData[index][2])
+              })
+            }).then(_ => {
+              console.log(window.containerCpuData[0])
+              window.containerMemoryData = containerMemoryData
+            })
             chart.data.datasets.forEach(function(dataset, index) {
               dataset.data.push({
                 x: Date.now(),
