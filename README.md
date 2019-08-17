@@ -25,6 +25,7 @@ For detailed explanation on how things work, checkout [Nuxt.js docs](https://nux
 
 ``` bash
 # install dependencies
+$ cd server
 $ npm install
 
 # build for production and launch server
