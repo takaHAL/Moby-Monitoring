@@ -18,11 +18,7 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
-declare global {
-    interface Window {
-        containerCpuData: number[],
-    }
-}
+
 @Component({
   components: {
     containerChartHeader : () => import('~/components/atoms/dashboard/containerChartHeader.vue'),
@@ -35,6 +31,8 @@ export default class ContainerMemoryChart extends Vue {
   private containerData: Chart.ChartData = {datasets: null}
   private loaded: boolean = false
   private height: number = 200
+  private containerCpuData: number[] = []
+  private chartOptions: Chart.ChartOptions
 
   private created (){
     const self = this
@@ -44,9 +42,9 @@ export default class ContainerMemoryChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-      window.containerCpuData = []
+      self.containerCpuData = []
       res.data.containerList.forEach((value,index) => {
-        window.containerCpuData.push(res.data.containerData[index][1])
+        self.containerCpuData.push(res.data.containerData[index][1])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -58,68 +56,74 @@ export default class ContainerMemoryChart extends Vue {
       })
     }).then(_ => {
       self.containerData.datasets = chartDataContainer
+      self.getChartOption()
       self.loaded = true
     })
   }
 
-  public chartOptions: Chart.ChartOptions = {
-    responsive: true,
-    animation: {
-      duration: 0
-    },
-    hover: {
-      animationDuration: 0
-    },
-    responsiveAnimationDuration: 0,
-    legend: {
-      labels: {
-        fontColor: "#FFF"
+  private getChartOption(){
+    const self = this
+    self.chartOptions = {
+      responsive: true,
+      animation: {
+        duration: 0
       },
-    },
-    scales: {
-      yAxes: [{
-        gridLines: {
-          color: "#555",
-          zeroLineColor: "#555"
-        },
-        ticks: {
-          suggestedMin: 0,
-          suggestedMax: 1,
+      hover: {
+        animationDuration: 0
+      },
+      responsiveAnimationDuration: 0,
+      legend: {
+        labels: {
           fontColor: "#FFF"
-        }
-      }],
-      xAxes: [{
-        gridLines: {
-          color: "#555",
-          zeroLineColor: "#555"
         },
-        ticks: {
-          fontColor: "#FFF",
-        },
-        type: 'realtime',
-        realtime: {
-          duration: 6000,
-          delay: 2000,
-          onRefresh: function(chart) {
-            var containerCpuData: number[] = []
-            axios.get("http://localhost:7000/containerStats")
-            .then(res => {
-              containerCpuData = []
-              res.data.containerList.forEach((value,index) => {
-                containerCpuData.push(res.data.containerData[index][1])
-              })
-            }).then(_ => {
-              window.containerCpuData = containerCpuData
-            })
-            chart.data.datasets.forEach(function(dataset, index) {
-              dataset.data.push({
-                x: Date.now(),
-                y: window.containerCpuData[index]
-              })
-            })
+      },
+      scales: {
+        yAxes: [{
+          gridLines: {
+            color: "#555",
+            zeroLineColor: "#555"
           },
-        }
-      }]
+          ticks: {
+            suggestedMin: 0,
+            suggestedMax: 1,
+            fontColor: "#FFF"
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            color: "#555",
+            zeroLineColor: "#555"
+          },
+          ticks: {
+            fontColor: "#FFF",
+          },
+          type: 'realtime',
+          realtime: {
+            duration: 6000,
+            delay: 2000,
+            onRefresh: function(chart) {
+              if (self.loaded){
+                var containerCpuData: number[] = []
+                axios.get("http://localhost:7000/containerStats")
+                .then(res => {
+                  containerCpuData = []
+                  res.data.containerList.forEach((value,index) => {
+                    containerCpuData.push(res.data.containerData[index][1])
+                  })
+                }).then(_ => {
+                  self.containerCpuData = containerCpuData
+                })
+              }
+              chart.data.datasets.forEach(function(dataset, index) {
+                dataset.data.push({
+                  x: Date.now(),
+                  y: self.containerCpuData[index]
+                })
+              })
+            },
+          }
+        }]
+      }
     }
   }
 }
