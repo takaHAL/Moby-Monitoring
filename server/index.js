@@ -91,10 +91,13 @@ app.get('/containerLogs/:id', function(req,res) {
 
 
 app.get('/dockerInfo', function(req,res) {
-  const info = dockerInfo()
-
+  const info = JSON.parse(dockerInfo())
+  const infoData = [
+    info.OSType,info.OperatingSystem,info.ServerVersion,
+    info.KernelVersion,info.HttpProxy,info.HttpsProxy,
+  ]
   res.send({
-    info: info
+    info: infoData
   })
 })
 
@@ -122,6 +125,14 @@ app.get('/dataTable', function(req,res) {
 app.get('/detailsDialog/:id', function(req,res) {
   const id = req.params.id
   const inspect = dockerInspect(id)
+  const networkName = inspect[0].HostConfig.NetworkMode
+  const networkSetting = {
+    ipaddress: inspect[0].NetworkSettings.Networks[networkName].IPAddress,
+    gateway: inspect[0].NetworkSettings.Networks[networkName].Gateway,
+    macaddress: inspect[0].NetworkSettings.Networks[networkName].MacAddress,
+    ipv6address: inspect[0].NetworkSettings.Networks[networkName].GlobalIPv6Address,
+    ipv6gateway: inspect[0].NetworkSettings.Networks[networkName].IPv6Gateway
+  }
   const configData = {
     cmd: inspect[0].Config.Cmd,
     env: inspect[0].Config.Env,
@@ -131,6 +142,7 @@ app.get('/detailsDialog/:id', function(req,res) {
   }
 
   res.send({
+    network: networkSetting,
     config: configData
   })
 })

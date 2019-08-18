@@ -5,7 +5,13 @@
       <v-tab>Config</v-tab>
 
       <v-tab-item>
-        tab1
+        <ul class="detailsDialog-list">
+          <li>IPAddress: {{ networkData.ipaddress }}</li>
+          <li>GlobalIPv6Address: {{ networkData.ipv6address }}</li>
+          <li>Gateway: {{ networkData.gateway }}</li>
+          <li>IPv6Gateway: {{ networkData.ipv6gateway }}</li>
+          <li>MacAddress: {{ networkData.macaddress }}</li>
+        </ul>
       </v-tab-item>
       <v-tab-item>
         <ul class="detailsDialog-list">
@@ -30,14 +36,14 @@ export default class DetailsDialog extends Vue {
   private tab: any = null
   private tabMenu: string[] = ['NetworkSettings','Config']
   private configData: object[] = []
-  private NetworkData: object[] = []
+  private networkData: object[] = []
 
   private created(){
     const self = this
     axios.get("http://localhost:7000/detailsDialog/"+this.id)
     .then(res => {
+      self.networkData = res.data.network
       self.configData = res.data.config
-      console.log(self.configData)
     })
   }
 }

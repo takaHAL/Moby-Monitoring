@@ -1,6 +1,9 @@
 <template>
   <div>
-    <div class="dataTable"><dataTable /></div>
+    <containerInfo />
+    <div class="dataTable">
+      <dataTable />
+    </div>
   </div>
 </template>
 
@@ -9,11 +12,11 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 
 @Component({
   components: {
+    containerInfo: () => import('~/components/molecules/network/containerInfo.vue'),
     dataTable: () => import('~/components/atoms/network/dataTable.vue'),
   }
 })
-export default class ContainerChart extends Vue {
-}
+export default class ContainerChart extends Vue {}
 </script>
 
 <style lang="scss" scoped>

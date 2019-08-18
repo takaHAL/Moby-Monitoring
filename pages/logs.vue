@@ -1,5 +1,7 @@
 <template>
-<div>{{ logs }}</div>
+  <div>
+    <pre>{{ logs }}</pre>
+  </div>
 </template>
 
 <script>
@@ -13,20 +15,10 @@ export default {
     }
   },
   created(){
+    const self = this
     axios.get("http://localhost:7000/containerLogs/nuxt.js")
     .then(res => {
-      const logs = unescape(res.data.result)
-      console.log(logs)
-      this.logs = String.fromCharCode(logs)
-      /*
-      const file = new Blob([unescape(res.data.result)],{
-        type: "text/js;charset=utf-8"
-      })
-      const fileCreate = document.createElement('a')
-      fileCreate.download = 'nuxt.log'
-      fileCreate.href = URL.createObjectURL(file)
-      fileCreate.click();
-      */
+      self.logs = res.data.result
     })
   }
 }
