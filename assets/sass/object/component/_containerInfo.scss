@@ -1,0 +1,27 @@
+.containerInfo{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  &-card{
+    width: calc(calc(100% - 60px) / 3);
+    box-sizing: border-box;
+    border-radius: 3px;
+    padding: 10px;
+    margin-bottom: 20px;
+
+    & h1{
+      font-weight: 600;
+      font-size: 18px;
+    }
+
+    &__data{
+      box-sizing: border-box;
+      padding-left: 10px;
+      margin-top: 5px;
+      font-size: 15px;
+      font-weight: 500;
+    }
+  }
+}
