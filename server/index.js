@@ -89,6 +89,19 @@ app.get('/containerLogs/:id', function(req,res) {
     })
 })
 
+//docker の起動など
+app.get('/containerAction/:action/:id', function(req,res) {
+  const id = req.params.id
+  const action = req.params.action
+  const execSync = require('child_process').execSync;
+  const result = execSync(
+    `/usr/local/bin/docker ${action} ${id}`
+  ).toString();
+  res.send({
+    result: result
+  })
+})
+
 
 app.get('/dockerInfo', function(req,res) {
   const info = JSON.parse(dockerInfo())
@@ -122,6 +135,27 @@ app.get('/dataTable', function(req,res) {
   })
 })
 
+app.get('/dataTableAll', function(req,res) {
+  const ls = dockerPsAll()
+  let psAllData = []
+
+  ls.split(/\r?\n/g).forEach(item => {
+    if(item.length !== 0){
+      psAllData.push({
+        id: JSON.parse(item).ID,
+        names: JSON.parse(item).Names,
+        status: JSON.parse(item).Status,
+        ports: JSON.parse(item).Ports,
+        running: JSON.parse(item).RunningFor,
+      })
+    }
+  })
+
+  res.send({
+    psAll: psAllData
+  })
+})
+
 app.get('/detailsDialog/:id', function(req,res) {
   const id = req.params.id
   const inspect = dockerInspect(id)
@@ -151,6 +185,14 @@ const dockerLs = () => {
   const execSync = require('child_process').execSync;
   const data = execSync(
     '/usr/local/bin/docker container ls --format "{{json .}}"'
+  ).toString()
+  return data
+}
+
+const dockerPsAll = () => {
+  const execSync = require('child_process').execSync;
+  const data = execSync(
+    '/usr/local/bin/docker ps -a --format "{{json .}}"'
   ).toString()
   return data
 }
