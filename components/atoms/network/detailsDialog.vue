@@ -33,6 +33,7 @@ import { Component, Vue, Prop } from 'vue-property-decorator'
 @Component({})
 export default class DetailsDialog extends Vue {
   @Prop() id!: string
+  @Prop() network!: string
   private tab: any = null
   private tabMenu: string[] = ['NetworkSettings','Config']
   private configData: object[] = []
@@ -40,7 +41,7 @@ export default class DetailsDialog extends Vue {
 
   private created(){
     const self = this
-    axios.get("http://localhost:7000/detailsDialog/"+this.id)
+    axios.get("http://localhost:7000/detailsDialog/"+this.id +'/' + this.network)
     .then(res => {
       self.networkData = res.data.network
       self.configData = res.data.config

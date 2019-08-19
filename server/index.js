@@ -171,10 +171,10 @@ app.get('/dataTableAll', function(req,res) {
   })
 })
 
-app.get('/detailsDialog/:id', function(req,res) {
+app.get('/detailsDialog/:id/:network', function(req,res) {
   const id = req.params.id
   const inspect = dockerInspect(id)
-  const networkName = inspect[0].HostConfig.NetworkMode
+  const networkName = req.params.network
   const networkSetting = {
     ipaddress: inspect[0].NetworkSettings.Networks[networkName].IPAddress,
     gateway: inspect[0].NetworkSettings.Networks[networkName].Gateway,

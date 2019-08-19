@@ -10,7 +10,7 @@
       <td class="dataTable"><p>{{ props.item.ports }}</p></td>
       <td class="dataTable"><p>{{ props.item.running }}</p></td>
       <td class="dataTable">
-        <v-btn @click="detailsDialog(props.item.id)" icon>
+        <v-btn @click="detailsDialog(props.item.id, props.item.networks)" icon>
           <v-icon>error</v-icon>
         </v-btn>
       </td>
@@ -21,7 +21,7 @@
    v-model="dialog"
    width="400" >
     <v-card>
-      <detailsDialog :id="id" />
+      <detailsDialog :id="id" :network="network" />
     </v-card>
   </v-dialog>
 </div>
@@ -49,6 +49,7 @@ export default class DataTable extends Vue {
   private mainColor: string = "#FFF"
   private dialog: boolean = false
   private id: string = ''
+  private network: string = ''
 
   private mounted(){
     const self = this
@@ -58,8 +59,9 @@ export default class DataTable extends Vue {
     })
   }
 
-  detailsDialog(id: string): void{
+  detailsDialog(id: string, network: string): void{
     this.id = id
+    this.network = network
     this.dialog = !this.dialog
   }
 }
