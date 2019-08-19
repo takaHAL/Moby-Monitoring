@@ -100,15 +100,30 @@ app.get('/containerLogs/:id', function(req,res) {
     const id = req.params.id
     const execSync = require('child_process').execSync;
     let result = execSync(
-      `/usr/local/bin/docker logs ${id}`
+      `/usr/local/bin/docker logs -t ${id}`
     ).toString();
-    
+
     // result = iconvLite.decode(result, 'shift-jis')
 
     // response
     res.send({
       result: result
     })
+})
+
+//立っているコンテナ一覧取得
+app.get('/containerList', function(req,res) {
+  const execSync = require('child_process').execSync;
+  let result = execSync(
+    `/usr/local/bin/docker ps --format "{{.Names}}"`
+  ).toString();
+
+  // result = iconvLite.decode(result, 'shift-jis')
+
+  // response
+  res.send({
+    result: result
+  })
 })
 
 // いい感じにパースする
