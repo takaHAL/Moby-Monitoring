@@ -9,13 +9,10 @@
 $ yarn install
 
 # serve with hot reload at localhost:3000
-$ yarn dev
-
-# build for production and launch server
-$ yarn build
-$ yarn start
+$ yarn run dev
 
 # generate static project
+$ yarn build
 $ yarn generate
 ```
 
@@ -25,8 +22,8 @@ For detailed explanation on how things work, checkout [Nuxt.js docs](https://nux
 
 ``` bash
 # install dependencies
+$ cd server
 $ npm install
-
 # build for production and launch server
 $ npm run start
 ```

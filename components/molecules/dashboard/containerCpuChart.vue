@@ -31,6 +31,8 @@ export default class ContainerMemoryChart extends Vue {
   private containerData: Chart.ChartData = {datasets: null}
   private loaded: boolean = false
   private height: number = 200
+  private containerCpuData: number[] = []
+  private chartOptions: Chart.ChartOptions
 
   private created (){
     const self = this
@@ -40,8 +42,9 @@ export default class ContainerMemoryChart extends Vue {
     axios.get("http://localhost:7000/containerStats")
     .then(res => {
       containerAry = res.data.containerList
-
+      self.containerCpuData = []
       res.data.containerList.forEach((value,index) => {
+        self.containerCpuData.push(res.data.containerData[index][1])
         chartDataContainer.push({
           type: 'line',
           label: containerAry[index],
@@ -53,56 +56,74 @@ export default class ContainerMemoryChart extends Vue {
       })
     }).then(_ => {
       self.containerData.datasets = chartDataContainer
+      self.getChartOption()
       self.loaded = true
     })
   }
 
-  public chartOptions: Chart.ChartOptions = {
-    responsive: true,
-    animation: {
-      duration: 0
-    },
-    hover: {
-      animationDuration: 0
-    },
-    responsiveAnimationDuration: 0,
-    legend: {
-      labels: {
-        fontColor: "#FFF"
+  private getChartOption(){
+    const self = this
+    self.chartOptions = {
+      responsive: true,
+      animation: {
+        duration: 0
       },
-    },
-    scales: {
-      yAxes: [{
-        gridLines: {
-          color: "#555",
-          zeroLineColor: "#555"
-        },
-        ticks: {
+      hover: {
+        animationDuration: 0
+      },
+      responsiveAnimationDuration: 0,
+      legend: {
+        labels: {
           fontColor: "#FFF"
-        }
-      }],
-      xAxes: [{
-        gridLines: {
-          color: "#555",
-          zeroLineColor: "#555"
         },
-        ticks: {
-          fontColor: "#FFF",
-        },
-        type: 'realtime',
-        realtime: {
-          duration: 6000,
-          delay: 2000,
-          onRefresh: function(chart) {
-            chart.data.datasets.forEach(function(dataset) {
-              dataset.data.push({
-                x: Date.now(),
-                y: Math.random()
-              })
-            })
+      },
+      scales: {
+        yAxes: [{
+          gridLines: {
+            color: "#555",
+            zeroLineColor: "#555"
           },
-        }
-      }]
+          ticks: {
+            suggestedMin: 0,
+            suggestedMax: 1,
+            fontColor: "#FFF"
+          }
+        }],
+        xAxes: [{
+          gridLines: {
+            color: "#555",
+            zeroLineColor: "#555"
+          },
+          ticks: {
+            fontColor: "#FFF",
+          },
+          type: 'realtime',
+          realtime: {
+            duration: 6000,
+            delay: 2000,
+            onRefresh: function(chart) {
+              if (self.loaded){
+                var containerCpuData: number[] = []
+                axios.get("http://localhost:7000/containerStats")
+                .then(res => {
+                  containerCpuData = []
+                  res.data.containerList.forEach((value,index) => {
+                    containerCpuData.push(res.data.containerData[index][1])
+                  })
+                }).then(_ => {
+                  self.containerCpuData = containerCpuData
+                })
+              }
+              chart.data.datasets.forEach(function(dataset, index) {
+                dataset.data.push({
+                  x: Date.now(),
+                  y: self.containerCpuData[index]
+                })
+              })
+            },
+          }
+        }]
+      }
     }
   }
 }

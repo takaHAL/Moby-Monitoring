@@ -1,9 +1,11 @@
 <template>
   <div class="containerChart">
+<!--
     <containerCpu />
     <containerMemory />
     <containerSent />
     <containerRecived />
+-->
   </div>
 </template>
 
