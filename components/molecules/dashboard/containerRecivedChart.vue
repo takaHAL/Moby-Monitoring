@@ -28,6 +28,7 @@ export default class ContainerRecivedChart extends Vue {
   private height: number = 200
   private containerNetworkRecived: number[] = []
   private chartOptions: Chart.ChartOptions
+  private apiFlg:boolean = true
 
   private created (){
     const self = this
@@ -95,10 +96,11 @@ export default class ContainerRecivedChart extends Vue {
           type: 'realtime',
           realtime: {
             duration: 6000,
-            delay: 2000,
+            delay: 5000,
             onRefresh: function(chart) {
-              if (self.loaded){
+              if (self.loaded && self.apiFlg){
                 var containerNetworkRecived: number[] = []
+                self.apiFlg = false
                 axios.get("http://localhost:7000/containerStats")
                 .then(res => {
                   containerNetworkRecived = []
@@ -107,6 +109,7 @@ export default class ContainerRecivedChart extends Vue {
                     containerNetworkRecived.push(network.slice(network.indexOf('/'), network.length).replace(/[^0-9^\.]/g, ''))
                   })
                 }).then(_ => {
+                  self.apiFlg = true
                   self.containerNetworkRecived = containerNetworkRecived
                 })
               }

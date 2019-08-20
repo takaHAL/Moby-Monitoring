@@ -18,6 +18,7 @@
 import axios from 'axios'
 import { Component, Vue, Prop } from 'vue-property-decorator'
 import Chart from 'chart.js'
+import { truncate } from 'fs';
 
 @Component({
   components: {
@@ -33,6 +34,7 @@ export default class ContainerMemoryChart extends Vue {
   private height: number = 200
   private containerMemoryData: number[] = []
   private chartOptions: Chart.ChartOptions
+   private apiFlg:boolean = true
 
   private created (){
     const self = this
@@ -99,9 +101,10 @@ export default class ContainerMemoryChart extends Vue {
           type: 'realtime',
           realtime: {
             duration: 6000,
-            delay: 2000,
+            delay: 5000,
             onRefresh: function(chart) {
-              if (self.loaded){
+              if (self.loaded && self.apiFlg){
+                self.apiFlg = false
                 var containerMemoryData: number[] = []
                 axios.get("http://localhost:7000/containerStats")
                 .then(res => {
@@ -110,6 +113,7 @@ export default class ContainerMemoryChart extends Vue {
                     containerMemoryData.push(res.data.containerData[index][2])
                   })
                 }).then(_ => {
+                  self.apiFlg = true
                   self.containerMemoryData = containerMemoryData
                 })
               }
