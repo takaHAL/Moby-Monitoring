@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="network">
     <containerInfo />
     <div class="dataTable">
       <dataTable />

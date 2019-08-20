@@ -1,0 +1,45 @@
+.logs{
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+
+  &-list{
+    @include boxShadow();
+    width: 400px;
+    background: $subColor;
+
+    & li{
+      width: 100%;
+      box-sizing: border-box;
+      padding: 10px 5px;
+      font-size: 13px;
+
+      &:not(:last-child){
+        border-bottom: $border;
+      }
+    }
+  }
+
+  &-right{
+    width: calc(100% - 270px);
+  }
+  &-left{
+    width: 250px;
+    margin-right: 20px;
+  }
+
+  &-display{
+    width: 100%;
+    max-height: 340px;
+    min-height: 340px;
+    overflow: hidden;
+    background: $subColor;
+    @include boxShadow();
+    box-sizing: border-box;
+    padding: 10px;
+
+    & pre{
+      margin-bottom: 5px;
+    }
+  }
+}

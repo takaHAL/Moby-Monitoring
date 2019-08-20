@@ -1,25 +1,31 @@
 <template>
-<div>
-  <v-flex xs12 sm12>
-    <v-text-field
-      label="ログ検索"
-      outlined
-      v-model="keyword"
-    ></v-text-field>
-  </v-flex>
-  <ul id="example-1">
-    <li v-for="containerName in containerList" v-bind:key="containerName">
-      <v-btn light v-on:click="containerSelect(containerName,'containerName')">{{ containerName }}</v-btn>
-    </li>
-  </ul>
+  <div class="logs">
 
-    <table>
-        <tr v-for="log in filteredLogs" v-bind:key="log" >
-            <td v-text="log"></td>
-        </tr>
-    </table>
-</div>
+    <div class="logs-left">
+      <v-data-table
+       :headers="headers"
+       :items="containerList"
+       class="network-dataTable" >
+        <template v-slot:items="props">
+          <td @click="containerSelect(props.item)"
+           style="width: 100%;">{{ props.item }}
+          </td>
+        </template>
+      </v-data-table>
+    </div>
 
+    <div class="logs-right">
+      <v-text-field
+       label="log search"
+       v-model="keyword" />
+      <ul class="logs-display">
+        <li v-for="log in filteredLogs" v-bind:key="log" >
+          <pre>{{ log }}</pre>
+        </li>
+      </ul>
+    </div>
+
+  </div>
 </template>
 
 <script>
@@ -32,42 +38,44 @@ export default {
       keyword:'',
       selectContainer:null,
       containerList: [],
-      logs: null
+      logs: null,
+      headers: [
+        {
+          text: 'Container Name',
+          sortable: false,
+          value: 'name'
+        },
+      ]
     }
   },
   created(){
-
-        axios.get("http://localhost:7000/containerList")
+    axios.get("http://localhost:7000/containerList")
     .then(res => {
       const containerList = unescape(res.data.result)
-
       this.containerList= containerList
       this.containerList = (this.containerList.replace(/\n+$/g,'')).split(/\n/);
-
     })
   },
   methods : {
     containerSelect(containerName){
+        console.log(containerName)
       this.selectContainer = containerName
       axios.get("http://localhost:7000/containerLogs/" + containerName)
-    .then(res => {
-      const logs = unescape(res.data.result)
-      this.logs = logs
-      this.logs = (this.logs.replace(/\n+$/g,'')).split(/\n/);
-      console.log(this.logs)
-      // this.logs = String.fromCharCode(logs)
-    })
+      .then(res => {
+        const logs = unescape(res.data.result)
+        this.logs = logs
+        this.logs = (this.logs.replace(/\n+$/g,'')).split(/\n/);
+      })
     }
   },
   computed :{
     filteredLogs: function() {
-      var logs = [];
-
-      for(var i in this.logs) {
-          var log = this.logs[i];
-          if(log.indexOf(this.keyword) !== -1) {
-              logs.push(log);
-          }
+      let logs = [];
+      for(let i in this.logs) {
+        var log = this.logs[i];
+        if(log.indexOf(this.keyword) !== -1) {
+          logs.push(log);
+        }
       }
       return logs;
     }
@@ -75,3 +83,8 @@ export default {
 }
 </script>
 
+<style lang="scss" scoped>
+.v-list{
+  padding: 0;
+}
+</style>

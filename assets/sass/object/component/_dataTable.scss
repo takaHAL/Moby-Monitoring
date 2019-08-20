@@ -1,18 +1,18 @@
 .dataTable{
   width: 100%;
-  
+
   & thead,& tbody{
     width: 100%;
     display: block;
     min-width: 100%;
   }
-    
+
   & thead tr,& tbody tr{
     width: 100%;
     display: flex;
-  
+
     & th,& td{ overflow: hidden; }
-  
+
     & th:nth-child(1),& td:nth-child(1){width: 200px; }
     & th:nth-child(2),& td:nth-child(2){ width: calc(calc(100% - 450px) / 2); }
     & th:nth-child(3),& td:nth-child(3){ width: calc(calc(100% - 450px) / 2); }
@@ -20,7 +20,24 @@
     & th:nth-child(5),& td:nth-child(5){ width: 100px; }
   }
 }
-  
+
+
+.network-dataTable{
+
+  & thead,& tbody{
+    width: 100%;
+    display: block;
+    min-width: 100%;
+  }
+
+  & thead tr,& tbody tr{
+    width: 100%;
+    display: flex;
+
+    & th,& td{ overflow: hidden; }
+  }
+}
+
 .v-table{
   width: 100%;
   display: block;
