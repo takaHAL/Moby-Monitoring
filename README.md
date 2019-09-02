@@ -1,25 +1,20 @@
-# docker-monitoring-app
+# Moby-Monitoring-app
 
 > My prime Nuxt.js project
 
 ## Build Setup
-
 ``` bash
 # install dependencies
-$ yarn install
+$ cd moby-monitoring
+$ npm i
 
 # serve with hot reload at localhost:3000
 $ yarn run dev
-
-# generate static project
-$ yarn build
-$ yarn generate
 ```
 
 For detailed explanation on how things work, checkout [Nuxt.js docs](https://nuxtjs.org).
 
 ## Express Server
-
 ``` bash
 # install dependencies
 $ cd server
