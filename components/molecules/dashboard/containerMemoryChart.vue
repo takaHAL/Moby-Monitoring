@@ -87,6 +87,7 @@ export default class ContainerMemoryChart extends Vue {
           },
           ticks: {
             suggestedMin: 0,
+            suggestedMax: 100,
             fontColor: "#FFF"
           }
         }],
